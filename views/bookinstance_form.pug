@@ -1,0 +1,46 @@
+extends layout
+
+block content
+  h1=title
+
+  form(method='POST' action='')
+    div.form-group
+      label(for='book') Book:
+      select#book.form-control(type='select' placeholder='Select book' name='book' required='true')
+        for book in book_list
+          if bookinstance
+            option(
+              value=book._id 
+              selected=(
+                bookinstance.book._id == book._id.toString() 
+                || bookinstance.book.toString()==book._id.toString() ? 'selected' : false)) #{book.title}
+          else
+            option(value=book._id) #{book.title}
+        
+    div.form-group
+      label(for='imprint') Imprint:
+      input#imprint.form-control(type='text' placeholder='Publisher and date information' name='imprint' required='true' value=(undefined===bookinstance ? '' : bookinstance.imprint))
+    div.form-group
+      label(for='due_back') Date when book available:
+      input#due_back.form-control(type='date' name='due_back' value=(undefined===bookinstance ? '' : bookinstance.due_back_formatted))
+            
+    div.form-group
+      label(for='status') Status:
+      select#status.form-control(type='select' placeholder='Select status' name='status' required='true')
+        if (errors || bookinstance)
+          option(value = book_status) #{book_status}
+        if(book_status != 'Maintenance')
+            option(value='Maintenance') Maintenance
+        if(book_status != 'Available')
+            option(value='Available') Available
+        if(book_status != 'Loaned')   
+            option(value='Loaned') Loaned
+        if(book_status != 'Reserved')   
+            option(value='Reserved') Reserved
+
+    button.btn.btn-primary(type='submit') Submit
+
+  if errors 
+    ul
+      for error in errors
+        li!= error.msg
